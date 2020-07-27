@@ -1,0 +1,31 @@
+# docker-compose up --detach --build
+
+version: '3'
+
+services:
+    rcmd-py:
+        build: ./python
+        volumes:
+            - ./python:/app
+            - ./rest:/rest
+    
+    rcmd-go:
+        build: ./go
+        volumes:
+            - ./go:/go/src/app
+            - ./rest:/rest
+        ports:
+            - 3000:3000
+        depends_on:
+            - rcmd-py
+    
+    rcmd-php:
+        build: ./php
+        volumes: 
+            - ./rest:/rest
+            - ./php:/var/www/html
+        ports: 
+            - 80:80
+        depends_on:
+            - rcmd-py
+            - rcmd-go

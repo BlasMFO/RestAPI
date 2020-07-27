@@ -1,0 +1,12 @@
+gitdb2==2.0.5
+GitPython==3.0.3
+googledrivedownloader==0.4
+h5py==2.10.0
+json5==0.9.5
+jsonschema==3.1.1
+numpy==1.17.5
+pandas==1.0.3
+pickleshare==0.7.5
+pytest==5.3.2
+regex==2020.1.8
+requests==2.23.0
