@@ -8,21 +8,28 @@ import (
 	"os"
 	"time"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-// Home -> home route
-func Home(c *fiber.Ctx) {
-	fmt.Println("Home -> func")
+var c = make(chan []byte, 1)
 
-	c.Send("This endpoint is -> Home")
+// Home -> home route
+func Home(ctx *fiber.Ctx) (err error) {
+	fmt.Println("Home -> func")
+	if err != nil {
+		return ctx.SendStatus(404)
+	}
+	return ctx.SendString("This endpoint is -> Home")
 }
 
 // SelectMovie -> get the recommendations of the selected movie
-func SelectMovie(c *fiber.Ctx) {
+func SelectMovie(ctx *fiber.Ctx) (err error) {
+	if err != nil {
+		return ctx.SendStatus(500)
+	}
 	fmt.Println("SelectMovie -> func")
 
-	movieParam := c.Params("user_movie")
+	movieParam := ctx.Params("user_movie")
 	fmt.Println(movieParam)
 
 	movie := usermovie{Movie: movieParam}
@@ -30,10 +37,10 @@ func SelectMovie(c *fiber.Ctx) {
 	movieJSON, _ := json.Marshal(movie)
 
 	// Write the JSON file with the user_movie name
-	err := ioutil.WriteFile("/rest/usermovie.json", movieJSON, 0644)
+	err = ioutil.WriteFile("/rest/usermovie.json", movieJSON, 0644)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return ctx.SendStatus(500)
 	}
 
 	// Wrtite the number 1 into read (file to allow the python script process the request)
@@ -41,30 +48,29 @@ func SelectMovie(c *fiber.Ctx) {
 	err = ioutil.WriteFile("/rest/read", data, 0644)
 	if err != nil {
 		fmt.Println(err)
+		return ctx.SendStatus(500)
 	}
 
 	// Erases old recommendation
 	_ = os.Remove("/rest/rcmd_movies.json")
 
-	chanRcmd := make(chan []byte, 1)
-
 	go func() {
-		chanIs := readOut()
-		chanRcmd <- chanIs
+		chanIs := readOutput()
+		c <- chanIs
 	}()
 
 	select {
-	case res := <-chanRcmd:
+	case res := <-c:
 		result := rcmd{}
 		_ = json.Unmarshal(res, &result)
-		c.JSON(result)
+		return ctx.JSON(result)
 	case <-time.After(6 * time.Second):
-		c.Status(504).Send("No recommendations found :(")
 		fmt.Println("Timeout")
+		return ctx.Status(501).SendString("No recommendations found :(")
 	}
 }
 
-func readOut() []byte {
+func readOutput() []byte {
 	err := errors.New("no file read yet")
 	jsonFile := new(os.File)
 	byteValue := make([]byte, 0)

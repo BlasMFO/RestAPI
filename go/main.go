@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func setupRoutes(app *fiber.App) {
@@ -19,5 +19,5 @@ func main() {
 
 	setupRoutes(app)
 
-	app.Listen(3000)
+	app.Listen(":3000")
 }
