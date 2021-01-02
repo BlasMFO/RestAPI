@@ -1,6 +1,6 @@
 # Simple Movie Recommender System
 
-This is a Movie Recommender System build with Docker (19.03), using Python (3.6) for the recommender algorithm, Golang (1.14) for the Rest API and PHP (7.3) for the web interface. The project is a showcase of a simple web app to show how to deploy a Docker app, in which containers interact with each other, with just a few steps in every machine you want.
+This is a Movie Recommender System build with Docker (20.10), using Python (3.6) for the recommender algorithm, Golang (1.15) for the Rest API and PHP (7.3) for the web interface. The project is a showcase of a simple web app to show how to deploy a Docker app, in which containers interact with each other, with just a few steps in every machine you want.
 
 ## Interface
 
