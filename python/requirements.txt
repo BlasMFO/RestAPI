@@ -1,5 +1,5 @@
 gitdb2==2.0.5
-GitPython==3.0.3
+GitPython==3.1.32
 googledrivedownloader==0.4
 h5py==2.10.0
 json5==0.9.5
